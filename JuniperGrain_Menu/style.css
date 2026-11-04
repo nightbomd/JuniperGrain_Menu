@@ -7,3 +7,6 @@
 }
 
 /* Your styles go below. */
+.sold-out {
+  opacity: 0.5 !important;
+}

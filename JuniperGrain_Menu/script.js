@@ -45,21 +45,78 @@ async function startMenu() {
 // 3. function showMenu(items)
 //    One heading per category, then a card for each item:
 //    photo, name, description, price, popular badge, tags, sold out.
-function showMenu(items) {
-    const menu = items.map(i => `<div class="card" style="width: 18rem;">
-  <img src="${i.image}" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">${i.name}</h5>
-    <p class="card-text">${i.description}</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>`).join(" ");
+const getCategorys = () => {
+    const categories = [];
 
-    menuContainer.innerHTML = menu;
+    allItems.forEach(item => {
+        if (!categories.includes(item.category)) {
+            categories.push(item.category);
+        }
+
+    })
+    return categories;
 }
+
+function showMenu(items) {
+    
+    let badge = "";
+    let soldText = "";
+    let tagsHTML = "";
+    let menuHTMl = ""
+
+        const menu = items.map(i => `
+        <div class="card  ${i.soldOut ? 'sold-out' : ''}"   style="width: 18rem;">
+            <img src="${i.image}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">${i.name} ${i.popular ? `<span class="badge bg-danger">Popular</span>` : ""}</h5>
+                <p class="card-text">${i.description}</p>
+                <p class="text-success fw-bold"> $${i.price.toFixed(2)}</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    `).join("");
+
+    menuContainer.innerHTML = `
+        <div class="container d-flex flex-wrap justify-content-center gap-3">
+            ${menu}
+        </div>
+    `;
+}
+
+const filterButtons = ["coffee", "breakfast", "bakery", "lunch", "all"];
+
+const buildFilters = () => {
+    const container = document.createElement("div");
+
+    const buttons = filterButtons.map(b => {
+        return `<button class="btn btn-success p-2 rounded-5 shadow" id="filter" value="${b}">${b}</button>`;
+    }).join("");
+
+    const nav = document.getElementById("filters");
+    container.classList.add("container", "text-center", "d-flex", "gap-3", "justify-content-center")
+    container.innerHTML = buttons;
+    nav.appendChild(container);
+};
+buildFilters();
+const btns = document.querySelectorAll("#filter");
+btns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        const chosenCategory = e.target.value;
+        const filteredCards = allItems.filter(item => item.category.toLowerCase() === chosenCategory.toLowerCase());
+        if (chosenCategory === "all") {
+            showMenu(allItems);
+            return;
+        }
+        showMenu(filteredCards);
+        console.log("gay");
+    });
+});
+
+
 // 4. function buildFilters(items)
 //    One "All" button, plus one button per category in the data.
 //    A click shows only that category's items.
 
 // 5. Call startMenu() when the page opens.
 startMenu();
+console.log(getCategorys());
