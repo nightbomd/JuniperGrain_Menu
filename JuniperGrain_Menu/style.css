@@ -10,3 +10,35 @@
 .sold-out {
   opacity: 0.5 !important;
 }
+.logo {
+  width: 200px;
+  height: auto;
+}
+.spinner {
+  width: 3rem;
+  height: 3rem;
+}
+.btn-primary {
+  background-color: var(--sage);
+  border-color: var(--sage);
+}
+.bg-danger {
+  background-color: var(--terracotta) !important;
+  color: var(--cream) !important;
+}
+.sage {
+  background-color: var(--sage);
+  color: white;
+}
+.terracotta {
+  background-color: var(--terracotta);
+  color: white;
+}
+header {
+  background-color: var(--cream);
+}
+.espresso {
+  background-color: var(--espresso);
+  color: white;
+}
+

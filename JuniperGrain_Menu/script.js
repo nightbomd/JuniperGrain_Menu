@@ -31,11 +31,17 @@ async function loadMenu() {
 //    buttons, show every item. In catch: show a friendly error.
 
 async function startMenu() {
-    statusMessage.textContent = "ur shits loading";
+    statusMessage.innerHTML = `
+  <div class=" p-5 d-flex justify-content-center">
+    <div class="spinner-border spinner" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+`;
     try {
         const items = await loadMenu();
         allItems = items;
-        statusMessage.textContent = "";
+        statusMessage.innerHTML = "";
         showMenu(allItems);
     }
     catch (error) {
@@ -58,20 +64,24 @@ const getCategorys = () => {
 }
 
 function showMenu(items) {
-    
+
     let badge = "";
     let soldText = "";
     let tagsHTML = "";
     let menuHTMl = ""
 
-        const menu = items.map(i => `
+    const menu = items.map(i => `
         <div class="card  ${i.soldOut ? 'sold-out' : ''}"   style="width: 18rem;">
             <img src="${i.image}" class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">${i.name} ${i.popular ? `<span class="badge bg-danger">Popular</span>` : ""}</h5>
+                <span class="badge espresso ">${i.category}</span>
+                <span class="badge bg-success-subtle text-dark ">${i.tags.join(", ")}</span>
+                <h5 class=" fs-5 card-title">${i.name} ${i.popular ? `<span class="badge bg-danger">Popular</span>` : ""}</h5>
                 <p class="card-text">${i.description}</p>
                 <p class="text-success fw-bold"> $${i.price.toFixed(2)}</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <button class="btn btn-primary" ${i.soldOut ? 'disabled' : ''}>
+    ${i.soldOut ? 'Sold Out' : 'Go Somewhere'}
+</button>
             </div>
         </div>
     `).join("");
@@ -87,9 +97,14 @@ const filterButtons = ["coffee", "breakfast", "bakery", "lunch", "all"];
 
 const buildFilters = () => {
     const container = document.createElement("div");
+    container.classList.add("d-flex", "flex-wrap", "justify-content-center", "gap-3", "p-4");
 
     const buttons = filterButtons.map(b => {
-        return `<button class="btn btn-success p-2 rounded-5 shadow" id="filter" value="${b}">${b}</button>`;
+        return `
+        <div class="p-2">
+        <button class="btn btn-success p-2 rounded-5 shadow" id="filter" value="${b}">${b}</button>
+        </div>
+    `;
     }).join("");
 
     const nav = document.getElementById("filters");
@@ -120,3 +135,6 @@ btns.forEach(btn => {
 // 5. Call startMenu() when the page opens.
 startMenu();
 console.log(getCategorys());
+const addToCart = () => {
+
+}
