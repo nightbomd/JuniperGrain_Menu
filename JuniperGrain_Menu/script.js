@@ -80,7 +80,7 @@ function showMenu(items) {
     let menuHTMl = ""
 
     const menu = items.map(i => `
-        <div class="card  ${i.soldOut ? 'sold-out' : ''}"   style="width: 18rem;">
+        <div class="card shadow ${i.soldOut ? 'sold-out' : ''}"   style="width: 18rem;">
             <img src="${i.image}" class="card-img-top" alt="...">
             <div class="card-body">
                 <span class="badge espresso ">${i.category}</span>
@@ -96,7 +96,7 @@ function showMenu(items) {
     `).join("");
 
     menuContainer.innerHTML = `
-        <div class="container d-flex flex-wrap justify-content-center gap-3">
+        <div class="container p-3 d-flex flex-wrap justify-content-center gap-3">
             ${menu}
         </div>
     `;
@@ -115,12 +115,13 @@ const buildFilters = () => {
         "justify-content-center",
         "gap-3",
         "p-4"
+
     );
 
     const buttons = filterButtons.map(b => {
         return `
-            <div class="p-2">
-                <button class="btn btn-success p-2 rounded-5 shadow filter-btn" value="${b}">
+            <div class="p-1">
+                <button class="btn btn-primary p-2 rounded-5 shadow filter-btn" value="${b}">
                     ${b}
                 </button>
             </div>
