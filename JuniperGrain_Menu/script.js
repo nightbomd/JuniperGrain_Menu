@@ -11,6 +11,8 @@ const menuContainer = document.getElementById("menu");
 const filterContainer = document.getElementById("filters");
 
 let allItems = [];
+let filterButtons = [];
+
 // 1. async function loadMenu()
 //    fetch the API, check response.ok, return the JSON.
 async function loadMenu() {
@@ -22,30 +24,37 @@ async function loadMenu() {
 
     const items = await res.json();
     console.log(items);
+
     return items;
 
 }
+
+/*
+async function getCategories() {
+    const categories = [...new Set(allItems.map(i => i.category))]
+    console.log(categories)
+    return categories;
+}*/
 
 // 2. async function startMenu()
 //    Show a loading message. In try: load the menu, build the
 //    buttons, show every item. In catch: show a friendly error.
 
 async function startMenu() {
-    statusMessage.innerHTML = `
-  <div class=" p-5 d-flex justify-content-center">
-    <div class="spinner-border spinner" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-`;
+   
     try {
         const items = await loadMenu();
         allItems = items;
+
+        filterButtons = ["All", ...getCategorys()];
+        buildFilters();
+
         statusMessage.innerHTML = "";
         showMenu(allItems);
-    }
-    catch (error) {
-        console.log(error);
+
+    } catch (error) {
+        console.error(error);
+        statusMessage.innerHTML = "Failed to load menu.";
     }
 }
 // 3. function showMenu(items)
@@ -91,41 +100,57 @@ function showMenu(items) {
             ${menu}
         </div>
     `;
+
 }
 
-const filterButtons = ["coffee", "breakfast", "bakery", "lunch", "all"];
+
 
 const buildFilters = () => {
     const container = document.createElement("div");
-    container.classList.add("d-flex", "flex-wrap", "justify-content-center", "gap-3", "p-4");
+
+    container.classList.add(
+        "container",
+        "d-flex",
+        "flex-wrap",
+        "justify-content-center",
+        "gap-3",
+        "p-4"
+    );
 
     const buttons = filterButtons.map(b => {
         return `
-        <div class="p-2">
-        <button class="btn btn-success p-2 rounded-5 shadow" id="filter" value="${b}">${b}</button>
-        </div>
-    `;
+            <div class="p-2">
+                <button class="btn btn-success p-2 rounded-5 shadow filter-btn" value="${b}">
+                    ${b}
+                </button>
+            </div>
+        `;
     }).join("");
 
-    const nav = document.getElementById("filters");
-    container.classList.add("container", "text-center", "d-flex", "gap-3", "justify-content-center")
     container.innerHTML = buttons;
-    nav.appendChild(container);
-};
-buildFilters();
-const btns = document.querySelectorAll("#filter");
-btns.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-        const chosenCategory = e.target.value;
-        const filteredCards = allItems.filter(item => item.category.toLowerCase() === chosenCategory.toLowerCase());
-        if (chosenCategory === "all") {
-            showMenu(allItems);
-            return;
-        }
-        showMenu(filteredCards);
-        console.log("gay");
+    filterContainer.innerHTML = "";
+    filterContainer.appendChild(container);
+   
+    const btns = document.querySelectorAll(".filter-btn");
+
+    btns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const chosenCategory = e.target.value;
+
+            if (chosenCategory.toLowerCase() === "all") {
+                showMenu(allItems);
+                return;
+            }
+
+            const filteredCards = allItems.filter(
+                item => item.category.toLowerCase() === chosenCategory.toLowerCase()
+            );
+
+            showMenu(filteredCards);
+        });
     });
-});
+};
+
 
 
 // 4. function buildFilters(items)
@@ -135,6 +160,16 @@ btns.forEach(btn => {
 // 5. Call startMenu() when the page opens.
 startMenu();
 console.log(getCategorys());
-const addToCart = () => {
 
-}
+setInterval(async () => {
+   try {
+    startMenu();
+    loadMenu();
+    showMenu(allItems);
+    getCategorys();
+    buildFilters();
+   }
+   catch (error) {
+    console.log(error)
+   }
+}, 5000)
