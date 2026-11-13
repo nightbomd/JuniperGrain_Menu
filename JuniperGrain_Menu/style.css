@@ -5,7 +5,9 @@
   --cream: #f7f2e9;
   --espresso: #2b211c;
 }
-
+html {
+  color: var(--sage);
+}
 /* Your styles go below. */
 .sold-out {
   opacity: 0.5 !important;
@@ -30,6 +32,9 @@
   background-color: var(--sage);
   color: white;
 }
+.sage-font {
+  color: var(--sage);
+}
 .terracotta {
   background-color: var(--terracotta);
   color: white;
@@ -46,4 +51,12 @@ header {
 }
 hr {
   border-top: 3px solid var(--sage) !important;
+}
+.header {
+  color: var(--sage);
+  font-size: 2rem;
+}
+.spinner-border {
+height: 3rem;
+width: 3rem;
 }

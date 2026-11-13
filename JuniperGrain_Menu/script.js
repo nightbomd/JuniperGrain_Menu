@@ -41,7 +41,13 @@ async function getCategories() {
 //    buttons, show every item. In catch: show a friendly error.
 
 async function startMenu() {
-   
+  statusMessage.innerHTML = `
+    <div class="d-flex justify-content-center align-items-center p-5">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+`;
     try {
         const items = await loadMenu();
         allItems = items;
@@ -74,33 +80,38 @@ const getCategorys = () => {
 
 function showMenu(items) {
 
-    let badge = "";
-    let soldText = "";
-    let tagsHTML = "";
-    let menuHTMl = ""
+    const menu = [...new Set(items.map(i => i.category))].map(category => {
 
-    const menu = items.map(i => `
-        <div class="card shadow ${i.soldOut ? 'sold-out' : ''}"   style="width: 18rem;">
-            <img src="${i.image}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <span class="badge espresso ">${i.category}</span>
-                <span class="badge bg-success-subtle text-dark ">${i.tags.join(", ")}</span>
-                <h5 class=" fs-5 card-title">${i.name} ${i.popular ? `<span class="badge bg-danger">Popular</span>` : ""}</h5>
-                <p class="card-text">${i.description}</p>
-                <p class="text-success fw-bold"> $${i.price.toFixed(2)}</p>
-                <button class="btn btn-primary" ${i.soldOut ? 'disabled' : ''}>
-    ${i.soldOut ? 'Sold Out' : 'Go Somewhere'}
-</button>
+        const categoryItems = items.filter(i => i.category === category);
+
+        return `
+            <h2 class="mt-4 header">${category}</h2>
+           <hr style="width: min(100%, ${categoryItems.length * 18 + (categoryItems.length - 1) * 1}rem);">
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                ${categoryItems.map(i => `
+                    <div class="card shadow ${i.soldOut ? 'sold-out' : ''}" style="width: 18rem;">
+                        <img src="${i.image}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <span class="badge espresso">${i.category}</span>
+                            <span class="badge bg-success-subtle text-dark">${i.tags.join(", ")}</span>
+                            <h5 class="fs-5 card-title">${i.name} ${i.popular ? `<span class="badge bg-danger">Popular</span>` : ""}</h5>
+                            <p class="card-text">${i.description}</p>
+                            <p class="text-success fw-bold">$${i.price.toFixed(2)}</p>
+                            <button class="btn btn-primary" ${i.soldOut ? 'disabled' : ''}>
+                                ${i.soldOut ? 'Sold Out' : 'Go Somewhere'}
+                            </button>
+                        </div>
+                    </div>
+                `).join("")}
             </div>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 
     menuContainer.innerHTML = `
-        <div class="container p-3 d-flex flex-wrap justify-content-center gap-3">
+        <div class="container p-3">
             ${menu}
         </div>
     `;
-
 }
 
 
@@ -120,7 +131,7 @@ const buildFilters = () => {
 
     const buttons = filterButtons.map(b => {
         return `
-            <div class="p-1">
+            <div class="col-auto">
                 <button class="btn btn-primary p-2 rounded-5 shadow filter-btn" value="${b}">
                     ${b}
                 </button>
@@ -131,7 +142,7 @@ const buildFilters = () => {
     container.innerHTML = buttons;
     filterContainer.innerHTML = "";
     filterContainer.appendChild(container);
-   
+
     const btns = document.querySelectorAll(".filter-btn");
 
     btns.forEach(btn => {
@@ -162,15 +173,4 @@ const buildFilters = () => {
 startMenu();
 console.log(getCategorys());
 
-setInterval(async () => {
-   try {
-    startMenu();
-    loadMenu();
-    showMenu(allItems);
-    getCategorys();
-    buildFilters();
-   }
-   catch (error) {
-    console.log(error)
-   }
-}, 5000)
+
